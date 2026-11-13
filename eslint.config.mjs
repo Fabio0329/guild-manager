@@ -11,8 +11,8 @@ const eslintConfig = defineConfig([
   ...nextTs,
   // Full jsx-a11y strict ruleset, as errors.
   { rules: jsxA11y.flatConfigs.strict.rules },
-  // Turn off stylistic rules that conflict with Prettier. Keep this last so
-  // it overrides anything above.
+  // Turn off stylistic rules that conflict with Prettier. Keep it after the
+  // rule configs above so it overrides them.
   prettier,
   // Override default ignores of eslint-config-next.
   globalIgnores([
