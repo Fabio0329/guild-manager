@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { site } from "@/lib/site";
-import { axe } from "@/test/axe";
+import { axe } from "@/test/vitest/axe";
 import { Header } from "./Header";
 
 describe("Header", () => {

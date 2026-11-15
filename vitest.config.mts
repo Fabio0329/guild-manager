@@ -6,7 +6,7 @@ export default defineConfig({
   test: {
     // A simulated browser (DOM, localStorage, events) inside Node.
     environment: "jsdom",
-    setupFiles: ["./vitest.setup.ts"],
+    setupFiles: ["./test/vitest/setup.ts"],
     include: ["**/*.test.{ts,tsx}"],
     // e2e/ holds Playwright page tests (step 7), which Vitest must not run.
     exclude: ["node_modules/**", ".next/**", "e2e/**"],

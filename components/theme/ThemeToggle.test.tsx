@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it } from "vitest";
 import { THEME_STORAGE_KEY } from "@/lib/theme";
-import { axe } from "@/test/axe";
+import { axe } from "@/test/vitest/axe";
 import { ThemeToggle } from "./ThemeToggle";
 
 // The head script sets data-theme in the real app; set it by hand here.
