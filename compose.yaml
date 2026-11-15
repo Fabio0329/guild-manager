@@ -1,0 +1,25 @@
+# Local development database. Start it with `npm run db:up`.
+services:
+  postgres:
+    image: postgres:17-alpine
+    # Dev-only credentials; they must match DATABASE_URL in .env.example.
+    environment:
+      POSTGRES_DB: guild_manager
+      POSTGRES_USER: guild_manager
+      POSTGRES_PASSWORD: guild_manager
+    # "Healthy" once Postgres accepts connections, so `up --wait` can block
+    # until the database is actually usable, not just started.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U guild_manager -d guild_manager"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    ports:
+      # Host port 5433, so it can run alongside another Postgres on 5432.
+      - "5433:5432"
+    volumes:
+      # Named volume: data survives container restarts and removals.
+      - guild_manager_postgres:/var/lib/postgresql/data
+
+volumes:
+  guild_manager_postgres:
