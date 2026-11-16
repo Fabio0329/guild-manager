@@ -47,3 +47,6 @@ next-env.d.ts
 
 # prisma generated client
 /server/generated/
+
+# personal Claude Code instructions
+CLAUDE.local.md
