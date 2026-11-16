@@ -1,26 +1,71 @@
 @import "tailwindcss";
 
+/* Tailwind's dark: variant follows data-theme (set by lib/theme.ts before
+   first paint) instead of only the OS setting, so a user choice can win. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Design tokens. Components use the token utilities (text-muted, bg-surface,
+   …), never raw colors, so a redesign is an edit here. */
+
+/* Light theme values: the default, used unless data-theme="dark" is set. */
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #18181b;
+  --muted: #52525b;
+  --border: #e4e4e7;
+  --surface: #f4f4f5;
+  --accent: #b45309;
 }
 
+/* Dark theme values: the same tokens, redefined when <html> has
+   data-theme="dark" (set by the theme script in lib/theme.ts). */
+:root[data-theme="dark"] {
+  --background: #0a0a0b;
+  --foreground: #f4f4f5;
+  --muted: #a1a1aa;
+  --border: #27272a;
+  --surface: #18181b;
+  --accent: #fbbf24;
+}
+
+/* Fallback when the theme script can't run (e.g. JS disabled): follow the
+   OS. Keep these values identical to the data-theme="dark" block above. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --background: #0a0a0b;
+    --foreground: #f4f4f5;
+    --muted: #a1a1aa;
+    --border: #27272a;
+    --surface: #18181b;
+    --accent: #fbbf24;
+  }
+}
+
+/* Expose the tokens to Tailwind as colors (text-muted, bg-surface, …). */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-surface: var(--surface);
+  --color-accent: var(--accent);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Centered content column: shared by the header and <main>. */
+@utility page-container {
+  width: 100%;
+  max-width: 64rem;
+  margin-inline: auto;
+  /* 16px gutters on phones, 24px from the sm breakpoint up. */
+  padding-inline: 1rem;
+  @media (width >= 40rem) {
+    padding-inline: 1.5rem;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }

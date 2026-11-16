@@ -1,0 +1,5 @@
+# Prettier already skips everything in .gitignore (.next, node_modules, …).
+# List only tracked files that shouldn't be reformatted.
+
+# Generated and rewritten by npm on every install.
+package-lock.json
