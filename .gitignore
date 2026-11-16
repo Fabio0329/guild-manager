@@ -44,3 +44,6 @@ next-env.d.ts
 # testing
 /playwright-report/
 /test-results/
+
+# prisma generated client
+/server/generated/

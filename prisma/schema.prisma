@@ -1,0 +1,15 @@
+// The data model. Edit this, then `npm run db:migrate` to create and apply a
+// migration. Models arrive with their features (User/Account/Session with
+// auth, Member/Character with the roster).
+
+generator client {
+  // Prisma 7's TypeScript client, generated into the repo (gitignored) so
+  // the app imports it like any other module.
+  provider = "prisma-client"
+  output   = "../server/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  // The connection URL lives in prisma.config.ts, not here.
+}

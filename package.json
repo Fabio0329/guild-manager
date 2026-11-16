@@ -9,17 +9,25 @@
     "lint": "eslint --max-warnings=0",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "typecheck": "next typegen && tsc --noEmit",
+    "typecheck": "prisma generate && next typegen && tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:a11y": "playwright test",
     "check": "npm run lint && npm run format:check && npm run typecheck && npm test && npm run test:a11y",
-    "db:up": "docker compose up -d --wait"
+    "db:up": "docker compose up -d --wait",
+    "postinstall": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:studio": "prisma studio"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "^7.10.1",
+    "@prisma/client": "^7.10.1",
     "next": "16.4.3",
+    "pg": "^8.23.1",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
@@ -31,9 +39,11 @@
     "@testing-library/user-event": "^14.6.10",
     "@types/culori": "^4.0.1",
     "@types/node": "^22.20.5",
+    "@types/pg": "^8.23.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "culori": "^4.0.2",
+    "dotenv": "^18.0.10",
     "eslint": "^9",
     "eslint-config-next": "16.4.3",
     "eslint-config-prettier": "^10.1.8",
@@ -41,6 +51,7 @@
     "jsdom": "^29.1.1",
     "prettier": "^3.10.0",
     "prettier-plugin-tailwindcss": "^0.8.1",
+    "prisma": "^7.10.1",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^5.1.0",
