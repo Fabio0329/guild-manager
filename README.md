@@ -32,7 +32,7 @@ Run `npx playwright install chromium` once before the page tests.
 | `npm test`           | Unit and component tests (Vitest); `test:watch` reruns      |
 | `npm run test:a11y`  | Page tests in a real browser (Playwright + axe)             |
 | `npm run db:up`      | Start the database and wait until it's ready                |
-| `npm run db:migrate` | Create and apply a migration after a schema change          |
+| `npm run db:migrate` | Create and apply a migration, then regenerate the client    |
 | `npm run db:deploy`  | Apply existing migrations (for hosted databases)            |
 | `npm run db:studio`  | Browse the database in Prisma Studio                        |
 

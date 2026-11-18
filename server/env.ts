@@ -13,6 +13,14 @@ const envSchema = z.object({
   // Any postgres:// or postgresql:// URL, e.g. the local one in .env.example.
   DATABASE_URL: z.url({ protocol: /^postgres(ql)?$/ }),
 
+  // Signs session cookies and encrypts stored OAuth tokens. Better Auth
+  // itself warns below 32 characters; here it's a hard stop.
+  BETTER_AUTH_SECRET: z
+    .string()
+    .min(32, "Must be at least 32 characters; see .env.example"),
+  // The app's own address, e.g. http://localhost:3000.
+  BETTER_AUTH_URL: z.url({ protocol: /^https?$/ }),
+
   // OAuth client credentials from each provider's developer portal. The IDs
   // are public; the secrets must never reach the browser (this file is
   // server-only).
