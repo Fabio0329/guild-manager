@@ -18,7 +18,8 @@ export const Header: FC = () => {
           {/* Add <nav aria-label="Main"> here once there are page links. The
               toggle stays outside it: it's a setting, not a destination. */}
           <ThemeToggle />
-          <SignInButton />
+          <SignInButton provider="battlenet" />
+          <SignInButton provider="discord" />
         </div>
       </div>
     </header>

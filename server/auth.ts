@@ -16,6 +16,14 @@ const placeholderEmail = (providerId: string, accountId: unknown) => {
   return `${providerId}-${String(accountId)}@users.invalid`;
 };
 
+// The first non-empty text value, for profile fields a provider may leave out.
+const firstString = (...values: unknown[]) => {
+  const found = values.find((value) => {
+    return typeof value === "string" && value.trim() !== "";
+  });
+  return typeof found === "string" ? found : undefined;
+};
+
 export const auth = betterAuth({
   secret: env.BETTER_AUTH_SECRET,
   baseURL: env.BETTER_AUTH_URL,
@@ -26,8 +34,10 @@ export const auth = betterAuth({
     encryptOAuthTokens: true,
   },
   plugins: [
-    // Providers Better Auth doesn't have built in, configured from their
-    // OpenID Connect discovery documents.
+    // Both providers are configured from their OpenID Connect discovery
+    // documents, so both get PKCE, a nonce, and a verified ID token.
+    // (Better Auth's built-in Discord provider skips PKCE and the ID token,
+    // though Discord supports both.)
     genericOAuth({
       config: [
         {
@@ -49,6 +59,28 @@ export const auth = betterAuth({
                   ? profile.battletag
                   : "Battle.net player",
               email: placeholderEmail("battlenet", profile.sub),
+              emailVerified: false,
+            };
+          },
+        },
+        {
+          providerId: "discord",
+          name: "Discord",
+          discoveryUrl: "https://discord.com/.well-known/openid-configuration",
+          clientId: env.DISCORD_CLIENT_ID,
+          clientSecret: env.DISCORD_CLIENT_SECRET,
+          // `identify` is Discord's scope for the username and avatar. No
+          // `email` scope: the app stores no real addresses.
+          scopes: ["openid", "identify"],
+          requireIdTokenVerification: true,
+          mapProfileToUser: (profile) => {
+            return {
+              // OIDC claim names: `nickname` is the display name,
+              // `preferred_username` the unique username.
+              name:
+                firstString(profile.nickname, profile.preferred_username) ??
+                "Discord user",
+              email: placeholderEmail("discord", profile.sub),
               emailVerified: false,
             };
           },

@@ -14,23 +14,26 @@ vi.mock("@/lib/auth-client", () => {
   return { authClient: { signIn: { social: signInSocial } } };
 });
 
-describe("SignInButton", () => {
-  it("starts a Battle.net sign-in that returns to the home page", async () => {
-    const user = userEvent.setup();
-    render(<SignInButton />);
+const providers = [
+  { provider: "battlenet", label: "Sign in with Battle.net" },
+  { provider: "discord", label: "Sign in with Discord" },
+] as const;
 
-    await user.click(
-      screen.getByRole("button", { name: "Sign in with Battle.net" }),
-    );
+describe.each(providers)(
+  "SignInButton for $provider",
+  ({ provider, label }) => {
+    it("starts that provider's sign-in, returning to the home page", async () => {
+      const user = userEvent.setup();
+      render(<SignInButton provider={provider} />);
 
-    expect(signInSocial).toHaveBeenCalledWith({
-      provider: "battlenet",
-      callbackURL: "/",
+      await user.click(screen.getByRole("button", { name: label }));
+
+      expect(signInSocial).toHaveBeenCalledWith({ provider, callbackURL: "/" });
     });
-  });
 
-  it("has no accessibility violations", async () => {
-    const { container } = render(<SignInButton />);
-    expect(await axe(container)).toHaveNoViolations();
-  });
-});
+    it("has no accessibility violations", async () => {
+      const { container } = render(<SignInButton provider={provider} />);
+      expect(await axe(container)).toHaveNoViolations();
+    });
+  },
+);
