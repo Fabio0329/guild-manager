@@ -21,6 +21,17 @@ jobs:
     name: Lint, test, and build
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    # server/env.ts refuses to start without these, and the build loads the
+    # auth route. Placeholders only: CI never connects to a database or signs
+    # anyone in. Real values live in .env.local and the host's settings.
+    env:
+      DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+      BETTER_AUTH_SECRET: ci-placeholder-secret-not-used-for-anything
+      BETTER_AUTH_URL: http://localhost:3100
+      BATTLENET_CLIENT_ID: ci-placeholder
+      BATTLENET_CLIENT_SECRET: ci-placeholder
+      DISCORD_CLIENT_ID: "0"
+      DISCORD_CLIENT_SECRET: ci-placeholder
     steps:
       - uses: actions/checkout@v7
 

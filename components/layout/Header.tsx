@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { FC } from "react";
+import { SignInButton } from "@/components/auth/SignInButton";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { site } from "@/lib/site";
 
@@ -17,6 +18,7 @@ export const Header: FC = () => {
           {/* Add <nav aria-label="Main"> here once there are page links. The
               toggle stays outside it: it's a setting, not a destination. */}
           <ThemeToggle />
+          <SignInButton />
         </div>
       </div>
     </header>
