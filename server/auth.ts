@@ -33,6 +33,19 @@ export const auth = betterAuth({
     // database leak doesn't hand out working tokens. (ID tokens aren't
     // covered; they're identity statements, not API keys.)
     encryptOAuthTokens: true,
+    accountLinking: {
+      // Linking only happens when a signed-in user presses "Connect". Never
+      // automatically because two accounts share an email: anyone who can
+      // put your email on a provider account could then take over yours.
+      // (Our placeholder emails never match anyway; this makes it a rule.)
+      disableImplicitLinking: true,
+      // Better Auth refuses to link accounts whose email isn't verified,
+      // unless the provider is trusted. Our placeholders are never
+      // "verified"; both providers are, because the ID token is.
+      trustedProviders: ["battlenet", "discord"],
+      // Each account has its own placeholder email, so they never match.
+      allowDifferentEmails: true,
+    },
   },
   session: {
     // Better Auth's defaults, written out: a sliding 7 days. Each visit

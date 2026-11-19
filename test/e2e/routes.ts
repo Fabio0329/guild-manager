@@ -3,4 +3,4 @@
  * app will sit behind sign-in, so there's no public sitemap to read routes
  * from. Add each new public route here. The missing page covers the 404.
  */
-export const publicRoutes = ["/", "/this-page-does-not-exist"];
+export const publicRoutes = ["/", "/account", "/this-page-does-not-exist"];

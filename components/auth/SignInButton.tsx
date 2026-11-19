@@ -2,15 +2,10 @@
 
 import type { FC } from "react";
 import { authClient } from "@/lib/auth-client";
-
-// Provider IDs as configured in server/auth.ts, with their display names.
-const providerNames = {
-  battlenet: "Battle.net",
-  discord: "Discord",
-} as const;
+import { type ProviderId, providerNames } from "@/lib/providers";
 
 type SignInButtonProps = {
-  provider: keyof typeof providerNames;
+  provider: ProviderId;
 };
 
 // Starts a sign-in: our server builds the authorize URL (with state, nonce,
