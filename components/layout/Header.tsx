@@ -1,6 +1,6 @@
 import Link from "next/link";
-import type { FC } from "react";
-import { SignInButton } from "@/components/auth/SignInButton";
+import { type FC, Suspense } from "react";
+import { UserMenu } from "@/components/auth/UserMenu";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { site } from "@/lib/site";
 
@@ -18,8 +18,12 @@ export const Header: FC = () => {
           {/* Add <nav aria-label="Main"> here once there are page links. The
               toggle stays outside it: it's a setting, not a destination. */}
           <ThemeToggle />
-          <SignInButton provider="battlenet" />
-          <SignInButton provider="discord" />
+          {/* The account area depends on the request's cookie. Suspense lets
+              the rest of the header be prerendered as a static shell; this
+              part is filled in per request. */}
+          <Suspense fallback={null}>
+            <UserMenu />
+          </Suspense>
         </div>
       </div>
     </header>

@@ -29,9 +29,16 @@ export const auth = betterAuth({
   baseURL: env.BETTER_AUTH_URL,
   database: prismaAdapter(db, { provider: "postgresql" }),
   account: {
-    // Encrypt providers' access, refresh, and ID tokens before saving them,
-    // so a database leak doesn't hand out working tokens.
+    // Encrypt providers' access and refresh tokens before saving them, so a
+    // database leak doesn't hand out working tokens. (ID tokens aren't
+    // covered; they're identity statements, not API keys.)
     encryptOAuthTokens: true,
+  },
+  session: {
+    // Better Auth's defaults, written out: a sliding 7 days. Each visit
+    // extends it, at most once a day; a week away signs you out.
+    expiresIn: 60 * 60 * 24 * 7,
+    updateAge: 60 * 60 * 24,
   },
   plugins: [
     // Both providers are configured from their OpenID Connect discovery
@@ -52,6 +59,10 @@ export const auth = betterAuth({
           // Refuse to run without a verifiable ID token: signature checked
           // against Battle.net's JWKS, plus the nonce from this sign-in.
           requireIdTokenVerification: true,
+          // Signing out of Guild Manager shouldn't also sign you out of
+          // Battle.net's website (Better Auth would by default, since
+          // Battle.net publishes an end_session_endpoint).
+          disableProviderLogout: true,
           mapProfileToUser: (profile) => {
             return {
               name:
