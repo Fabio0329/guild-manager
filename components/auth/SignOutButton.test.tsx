@@ -7,7 +7,7 @@ import { SignOutButton } from "./SignOutButton";
 const { signOut, refresh } = vi.hoisted(() => {
   return { signOut: vi.fn(), refresh: vi.fn() };
 });
-vi.mock("@/lib/auth-client", () => {
+vi.mock("@/lib/auth/client", () => {
   return { authClient: { signOut } };
 });
 vi.mock("next/navigation", () => {

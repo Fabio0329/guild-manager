@@ -2,6 +2,6 @@
 // the providers' callbacks (/api/auth/callback/<provider>), the session,
 // and sign-out. [...all] catches all of those paths and hands them over.
 import { toNextJsHandler } from "better-auth/next-js";
-import { auth } from "@/server/auth";
+import { auth } from "@/server/auth/config";
 
 export const { GET, POST } = toNextJsHandler(auth);

@@ -10,7 +10,7 @@ import { SignInButton } from "./SignInButton";
 const { signInSocial } = vi.hoisted(() => {
   return { signInSocial: vi.fn() };
 });
-vi.mock("@/lib/auth-client", () => {
+vi.mock("@/lib/auth/client", () => {
   return { authClient: { signIn: { social: signInSocial } } };
 });
 

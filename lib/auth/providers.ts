@@ -1,5 +1,6 @@
-// The sign-in providers, by the IDs configured in server/auth.ts, with their
-// display names. Shared by the sign-in, connect, and disconnect buttons.
+// The sign-in providers, by the IDs configured in server/auth/config.ts,
+// with their display names. Shared by the sign-in, connect, and disconnect
+// buttons.
 export const providerNames = {
   battlenet: "Battle.net",
   discord: "Discord",

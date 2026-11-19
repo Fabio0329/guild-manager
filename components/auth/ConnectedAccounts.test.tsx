@@ -8,13 +8,13 @@ import { ConnectedAccounts } from "./ConnectedAccounts";
 const { getSession, listAccounts } = vi.hoisted(() => {
   return { getSession: vi.fn(), listAccounts: vi.fn() };
 });
-vi.mock("@/server/session", () => {
+vi.mock("@/server/auth/session", () => {
   return { getSession };
 });
-vi.mock("@/server/accounts", () => {
+vi.mock("@/server/auth/accounts", () => {
   return { listAccounts };
 });
-vi.mock("@/lib/auth-client", () => {
+vi.mock("@/lib/auth/client", () => {
   return {
     authClient: {
       signIn: { social: vi.fn() },

@@ -7,7 +7,7 @@ import { ConnectAccountButton } from "./ConnectAccountButton";
 const { linkSocial } = vi.hoisted(() => {
   return { linkSocial: vi.fn() };
 });
-vi.mock("@/lib/auth-client", () => {
+vi.mock("@/lib/auth/client", () => {
   return { authClient: { linkSocial } };
 });
 

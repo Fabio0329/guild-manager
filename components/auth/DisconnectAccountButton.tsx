@@ -2,8 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import type { FC } from "react";
-import { authClient } from "@/lib/auth-client";
-import { type ProviderId, providerNames } from "@/lib/providers";
+import { authClient } from "@/lib/auth/client";
+import { type ProviderId, providerNames } from "@/lib/auth/providers";
 
 type DisconnectAccountButtonProps = {
   provider: ProviderId;

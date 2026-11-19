@@ -2,7 +2,7 @@
 import "server-only";
 
 import { headers } from "next/headers";
-import { auth } from "@/server/auth";
+import { auth } from "@/server/auth/config";
 
 // Throws if nobody is signed in: call it only after getSession() found a
 // user. Reads the request, so render callers inside <Suspense>.

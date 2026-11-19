@@ -7,7 +7,7 @@ import { DisconnectAccountButton } from "./DisconnectAccountButton";
 const { unlinkAccount, refresh } = vi.hoisted(() => {
   return { unlinkAccount: vi.fn(), refresh: vi.fn() };
 });
-vi.mock("@/lib/auth-client", () => {
+vi.mock("@/lib/auth/client", () => {
   return { authClient: { unlinkAccount } };
 });
 vi.mock("next/navigation", () => {

@@ -2,9 +2,9 @@ import type { FC } from "react";
 import { ConnectAccountButton } from "@/components/auth/ConnectAccountButton";
 import { DisconnectAccountButton } from "@/components/auth/DisconnectAccountButton";
 import { SignInButton } from "@/components/auth/SignInButton";
-import { isProviderId, providerIds, providerNames } from "@/lib/providers";
-import { listAccounts } from "@/server/accounts";
-import { getSession } from "@/server/session";
+import { isProviderId, providerIds, providerNames } from "@/lib/auth/providers";
+import { listAccounts } from "@/server/auth/accounts";
+import { getSession } from "@/server/auth/session";
 
 // Messages for the error codes Better Auth sends back (/account?error=…)
 // when connecting fails.

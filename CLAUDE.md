@@ -32,8 +32,11 @@ delete a test, or edit lint/test config or the hooks to get past it.
   - `components/<feature>/`: one component per file; shared ones go in
     `components/ui/`.
   - `lib/`: code safe to run anywhere (site identity, fonts, theme).
+    `lib/auth/`: the browser auth client and the provider list.
   - `server/`: server-only code. `server/db/client.ts` exports the single
-    `db` client; `server/env.ts` validates env vars with Zod.
+    `db` client; `server/env.ts` validates env vars with Zod;
+    `server/auth/`: Better Auth's config (`config.ts`), `getSession()`,
+    and `listAccounts()`.
   - `prisma/`: the schema and migrations, read by the Prisma CLI.
   - `test/vitest/`: Vitest support. `test/e2e/`: Playwright specs.
 

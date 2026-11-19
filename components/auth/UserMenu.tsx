@@ -3,7 +3,7 @@ import Link from "next/link";
 import type { FC } from "react";
 import { SignInButton } from "@/components/auth/SignInButton";
 import { SignOutButton } from "@/components/auth/SignOutButton";
-import { getSession } from "@/server/session";
+import { getSession } from "@/server/auth/session";
 
 // The header's account area: who's signed in (linking to /account) and a
 // sign-out button, or the sign-in buttons. Reads the request's cookie, so the header renders it

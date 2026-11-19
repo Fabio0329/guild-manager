@@ -8,10 +8,10 @@ import { UserMenu } from "./UserMenu";
 const { getSession } = vi.hoisted(() => {
   return { getSession: vi.fn() };
 });
-vi.mock("@/server/session", () => {
+vi.mock("@/server/auth/session", () => {
   return { getSession };
 });
-vi.mock("@/lib/auth-client", () => {
+vi.mock("@/lib/auth/client", () => {
   return { authClient: { signIn: { social: vi.fn() }, signOut: vi.fn() } };
 });
 vi.mock("next/navigation", () => {

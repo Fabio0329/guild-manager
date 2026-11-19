@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import type { FC } from "react";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth/client";
 
 // Deletes the session (the database row and the cookie), then re-renders the
 // server components so the header shows the sign-in buttons again.
