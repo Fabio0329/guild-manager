@@ -13,13 +13,31 @@ Guild management site: roster, raids, recruitment.
 npm install                 # also generates the Prisma client
 cp .env.example .env.local  # local settings; .env.local is never committed
 npm run db:up               # start PostgreSQL in Docker (port 5433)
+npm run db:deploy           # create the tables (apply the migrations)
+```
+
+Then fill in `.env.local` (each variable has a comment in `.env.example`):
+
+1. **`BETTER_AUTH_SECRET`**: generate one with `npx auth secret` or
+   `openssl rand -base64 32`.
+2. **Battle.net**: create a client at develop.battle.net (API Access) with
+   the redirect URL `http://localhost:3000/api/auth/callback/battlenet`, and
+   copy its ID and secret into `BATTLENET_CLIENT_ID` / `_SECRET`.
+3. **Discord**: create an application at discord.com/developers/applications;
+   under OAuth2, add the redirect `http://localhost:3000/api/auth/callback/discord`,
+   and copy its ID and secret into `DISCORD_CLIENT_ID` / `_SECRET`.
+
+```sh
 npm run dev                 # http://localhost:3000
 ```
+
+The app refuses to start while a variable is missing or malformed, and says
+which one.
 
 Run `npx playwright install chromium` once before the page tests. They use
 their own database, `guild_manager_test`, in the same Postgres: it's created
 and migrated automatically and emptied at the start of each run, so your
-dev data is never touched.
+dev data is never touched. They don't need real provider credentials.
 
 ## Scripts
 
