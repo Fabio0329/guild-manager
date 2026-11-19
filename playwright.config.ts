@@ -1,19 +1,21 @@
 import { defineConfig, devices } from "@playwright/test";
+import { baseURL, e2eEnv, port } from "./test/e2e/env";
 
-const port = 3100;
 const isCI = Boolean(process.env.CI);
 
 // Page-level tests against a real production build, in a real browser.
 // See test/e2e/ for the specs.
 export default defineConfig({
   testDir: "test/e2e",
+  // Creates, migrates, and empties the test database before the run.
+  globalSetup: "./test/e2e/global-setup.ts",
   fullyParallel: true,
   // Fail CI if a test.only was left in by accident.
   forbidOnly: isCI,
   retries: isCI ? 1 : 0,
   reporter: isCI ? [["github"], ["html", { open: "never" }]] : "list",
   use: {
-    baseURL: `http://localhost:${port}`,
+    baseURL,
     // Keep a step-by-step recording of failed tests (npx playwright show-trace).
     trace: "retain-on-failure",
   },
@@ -32,8 +34,12 @@ export default defineConfig({
   // Build and start the app before the tests, and stop it after.
   webServer: {
     command: `npm run build && npx next start -p ${port}`,
-    url: `http://localhost:${port}`,
-    reuseExistingServer: !isCI,
+    url: baseURL,
+    // Test database and test secret; these override .env.local.
+    env: e2eEnv,
+    // Always start a fresh server: one left over from something else could
+    // be pointed at the dev database instead of the test one.
+    reuseExistingServer: false,
     timeout: 180_000,
   },
 });

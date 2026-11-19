@@ -32,8 +32,11 @@ delete a test, or edit lint/test config or the hooks to get past it.
   - `components/<feature>/`: one component per file; shared ones go in
     `components/ui/`.
   - `lib/`: code safe to run anywhere (site identity, fonts, theme).
+    `lib/auth/`: the browser auth client and the provider list.
   - `server/`: server-only code. `server/db/client.ts` exports the single
-    `db` client; `server/env.ts` validates env vars with Zod.
+    `db` client; `server/env.ts` validates env vars with Zod;
+    `server/auth/`: Better Auth's config (`config.ts`), `getSession()`,
+    and `listAccounts()`.
   - `prisma/`: the schema and migrations, read by the Prisma CLI.
   - `test/vitest/`: Vitest support. `test/e2e/`: Playwright specs.
 
@@ -63,15 +66,21 @@ delete a test, or edit lint/test config or the hooks to get past it.
 
 - ESLint runs the full jsx-a11y strict ruleset with zero warnings allowed.
 - Every component gets a `vitest-axe` test asserting no violations.
-- Every public page is listed in `test/e2e/routes.ts`, so Playwright runs
-  axe on it in both themes and at 320px wide.
+- Every page is listed in `test/e2e/routes.ts`, so Playwright runs axe on
+  it in both themes and at 320px wide, signed out and signed in.
 
 ### Tests
 
 - Unit and component tests sit next to their code as `*.test.ts(x)`
   (Vitest, jsdom, Testing Library).
 - Page tests are `test/e2e/*.spec.ts` (Playwright, against a production
-  build).
+  build). They run against `guild_manager_test` with the settings in
+  `test/e2e/env.ts` (global setup creates, migrates, and empties it).
+  For signed-in pages use `signInAsNewUser(context)` from
+  `test/e2e/test-auth.ts`; never add Better Auth's `testUtils` plugin to
+  `server/auth/config.ts`.
+- New routes go in `test/e2e/routes.ts` (public, protected, or
+  signed-out-only), so every page gets axe and reflow checks.
 - A new check must be seen failing once: break the code, watch it fail,
   restore it.
 
@@ -86,10 +95,39 @@ delete a test, or edit lint/test config or the hooks to get past it.
   gzipped to the browser bundle. Client code imports only the inferred
   types (`import type`).
 - Change the data model in `prisma/schema.prisma`, then run
-  `npm run db:migrate`. Commit the generated migration with the schema
-  change.
+  `npm run db:migrate -- --name what_changed`. Read the generated SQL
+  (watch for `DROP` on renames), and commit it with the schema change.
+  Never edit a migration that has been applied anywhere shared.
 - Prisma is pinned to 7.x: npm's `latest` tag has pointed at an 8.0
   release candidate. Don't upgrade across a major without asking.
+
+### Auth (Better Auth)
+
+- Sign-in is Battle.net and Discord, both through Better Auth's generic
+  OIDC plugin (PKCE, nonce, ID tokens verified against each provider's
+  JWKS). Don't switch Discord to Better Auth's built-in provider: it skips
+  PKCE and the ID token.
+- **Every protected page, route handler, and server action checks the
+  session on the server** with `requireSession()` (or `getSession()`) from
+  `server/auth/session.ts`. `proxy.ts` only checks that a cookie exists:
+  it's an early redirect, never the security.
+- A new protected section goes in both `proxy.ts`'s `matcher` and
+  `protectedRoutes` in `test/e2e/routes.ts`.
+- Return addresses (`callbackURL`) go through `safeCallbackPath()` from
+  `lib/auth/redirect.ts`: paths on this site only.
+- Linking is explicit only (`disableImplicitLinking`); there are no real
+  emails, only `<provider>-<id>@users.invalid` placeholders.
+- Fields on Better Auth's tables need **both** the config
+  (`server/auth/config.ts`) and `schema.prisma` to agree. Extra fields are
+  user-settable unless `input: false`: anything users mustn't change (like
+  `role`) needs it.
+- Regenerating Better Auth's models: its CLI (`npx auth generate`) can't
+  load `server-only` files. Generate from a temporary config with the same
+  schema-relevant options (adapter, `user`/`account`, plugins) and no
+  server imports, into a scratch file, then copy the models over. Keep the
+  extra `@@unique([providerId, accountId])` on `Account`.
+- OAuth access and refresh tokens are encrypted in the database; ID tokens
+  aren't (a known, accepted gap for now).
 
 ## Scaffold reference
 
