@@ -29,6 +29,10 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
+  // "member" or "officer" (checked by Better Auth, not the database). Users
+  // can't set it themselves: `input: false` in server/auth/config.ts.
+  role String @default("member")
+
   @@unique([email])
   @@map("user")
 }

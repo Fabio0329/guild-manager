@@ -28,6 +28,20 @@ export const auth = betterAuth({
   secret: env.BETTER_AUTH_SECRET,
   baseURL: env.BETTER_AUTH_URL,
   database: prismaAdapter(db, { provider: "postgresql" }),
+  user: {
+    additionalFields: {
+      // What the user may do in the app. Officer-only actions arrive with
+      // the roster; for now everyone is a member.
+      role: {
+        type: ["member", "officer"],
+        defaultValue: "member",
+        // Never settable by the user (Better Auth's default is `true`):
+        // otherwise anyone could send { role: "officer" } to the
+        // update-user endpoint and promote themselves.
+        input: false,
+      },
+    },
+  },
   account: {
     // Encrypt providers' access and refresh tokens before saving them, so a
     // database leak doesn't hand out working tokens. (ID tokens aren't
