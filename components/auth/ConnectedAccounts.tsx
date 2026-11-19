@@ -1,10 +1,9 @@
 import type { FC } from "react";
 import { ConnectAccountButton } from "@/components/auth/ConnectAccountButton";
 import { DisconnectAccountButton } from "@/components/auth/DisconnectAccountButton";
-import { SignInButton } from "@/components/auth/SignInButton";
 import { isProviderId, providerIds, providerNames } from "@/lib/auth/providers";
 import { listAccounts } from "@/server/auth/accounts";
-import { getSession } from "@/server/auth/session";
+import { requireSession } from "@/server/auth/session";
 
 // Messages for the error codes Better Auth sends back (/account?error=…)
 // when connecting fails.
@@ -17,23 +16,13 @@ type ConnectedAccountsProps = {
   error?: string;
 };
 
-// Each provider, with Connect or Disconnect. Reads the session, so the page
-// renders it inside <Suspense>.
+// Each provider, with Connect or Disconnect. Signed-out visitors are sent to
+// sign in (and back here afterwards). Reads the session, so the page renders
+// it inside <Suspense>.
 export const ConnectedAccounts: FC<ConnectedAccountsProps> = async ({
   error,
 }) => {
-  const session = await getSession();
-
-  if (!session) {
-    return (
-      <div className="mt-6 flex flex-wrap items-center gap-3">
-        <p className="w-full">Sign in to manage how you sign in.</p>
-        {providerIds.map((provider) => {
-          return <SignInButton key={provider} provider={provider} />;
-        })}
-      </div>
-    );
-  }
+  await requireSession("/account");
 
   const accounts = (await listAccounts()).filter((account) => {
     return isProviderId(account.providerId);

@@ -5,11 +5,11 @@ import { ConnectedAccounts } from "./ConnectedAccounts";
 
 // Stand-ins for the server session, the account list, and the browser auth
 // client, so each test decides who's signed in with which providers.
-const { getSession, listAccounts } = vi.hoisted(() => {
-  return { getSession: vi.fn(), listAccounts: vi.fn() };
+const { requireSession, listAccounts } = vi.hoisted(() => {
+  return { requireSession: vi.fn(), listAccounts: vi.fn() };
 });
 vi.mock("@/server/auth/session", () => {
-  return { getSession };
+  return { requireSession };
 });
 vi.mock("@/server/auth/accounts", () => {
   return { listAccounts };
@@ -17,7 +17,6 @@ vi.mock("@/server/auth/accounts", () => {
 vi.mock("@/lib/auth/client", () => {
   return {
     authClient: {
-      signIn: { social: vi.fn() },
       linkSocial: vi.fn(),
       unlinkAccount: vi.fn(),
     },
@@ -36,24 +35,19 @@ const renderAccounts = async (error?: string) => {
 };
 
 beforeEach(() => {
-  getSession.mockReset();
+  requireSession.mockReset();
+  requireSession.mockResolvedValue(signedIn);
   listAccounts.mockReset();
 });
 
 describe("ConnectedAccounts", () => {
-  it("asks to sign in when signed out, without listing accounts", async () => {
-    getSession.mockResolvedValue(null);
+  it("requires a session, coming back to /account after sign-in", async () => {
+    listAccounts.mockResolvedValue([battlenet]);
     await renderAccounts();
-
-    expect(screen.getByText(/sign in to manage/i)).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: "Sign in with Battle.net" }),
-    ).toBeInTheDocument();
-    expect(listAccounts).not.toHaveBeenCalled();
+    expect(requireSession).toHaveBeenCalledWith("/account");
   });
 
   it("offers to connect the missing provider, never to remove the only one", async () => {
-    getSession.mockResolvedValue(signedIn);
     listAccounts.mockResolvedValue([battlenet]);
     await renderAccounts();
 
@@ -65,7 +59,6 @@ describe("ConnectedAccounts", () => {
   });
 
   it("offers to disconnect either one when both are connected", async () => {
-    getSession.mockResolvedValue(signedIn);
     listAccounts.mockResolvedValue([battlenet, discord]);
     await renderAccounts();
 
@@ -79,7 +72,6 @@ describe("ConnectedAccounts", () => {
   });
 
   it("explains a known linking error, and names an unknown one", async () => {
-    getSession.mockResolvedValue(signedIn);
     listAccounts.mockResolvedValue([battlenet]);
 
     const { unmount } = await renderAccounts(
@@ -95,20 +87,11 @@ describe("ConnectedAccounts", () => {
   });
 
   it.each([
-    { state: "signed out", session: null, accounts: [] },
-    { state: "one account", session: signedIn, accounts: [battlenet] },
-    {
-      state: "both accounts",
-      session: signedIn,
-      accounts: [battlenet, discord],
-    },
-  ])(
-    "has no accessibility violations with $state",
-    async ({ session, accounts }) => {
-      getSession.mockResolvedValue(session);
-      listAccounts.mockResolvedValue(accounts);
-      const { container } = await renderAccounts();
-      expect(await axe(container)).toHaveNoViolations();
-    },
-  );
+    { state: "one account", accounts: [battlenet] },
+    { state: "both accounts", accounts: [battlenet, discord] },
+  ])("has no accessibility violations with $state", async ({ accounts }) => {
+    listAccounts.mockResolvedValue(accounts);
+    const { container } = await renderAccounts();
+    expect(await axe(container)).toHaveNoViolations();
+  });
 });

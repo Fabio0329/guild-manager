@@ -6,13 +6,18 @@ import { type ProviderId, providerNames } from "@/lib/auth/providers";
 
 type SignInButtonProps = {
   provider: ProviderId;
+  // Where to land after signing in; a path on this site. Defaults to home.
+  callbackURL?: string;
 };
 
 // Starts a sign-in: our server builds the authorize URL (with state, nonce,
 // and the PKCE challenge) and the browser follows it.
-export const SignInButton: FC<SignInButtonProps> = ({ provider }) => {
+export const SignInButton: FC<SignInButtonProps> = ({
+  provider,
+  callbackURL = "/",
+}) => {
   const handleClick = async () => {
-    await authClient.signIn.social({ provider, callbackURL: "/" });
+    await authClient.signIn.social({ provider, callbackURL });
   };
 
   return (
