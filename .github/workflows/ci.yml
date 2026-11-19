@@ -21,10 +21,28 @@ jobs:
     name: Lint, test, and build
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    # Postgres for the page tests, same version as compose.yaml. The tests
+    # create guild_manager_test in it and apply the migrations themselves.
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: guild_manager
+          POSTGRES_PASSWORD: guild_manager
+          POSTGRES_DB: guild_manager
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U guild_manager"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     # server/env.ts refuses to start without these, and the build loads the
-    # auth route. Placeholders only: CI never connects to a database or signs
-    # anyone in. Real values live in .env.local and the host's settings.
+    # auth route. Placeholders: the page tests replace them with their own
+    # values (test/e2e/env.ts), pointed at TEST_DATABASE_URL below. Real
+    # values live in .env.local and the host's settings.
     env:
+      TEST_DATABASE_URL: postgresql://guild_manager:guild_manager@localhost:5432/guild_manager_test
       DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
       BETTER_AUTH_SECRET: ci-placeholder-secret-not-used-for-anything
       BETTER_AUTH_URL: http://localhost:3100

@@ -7,3 +7,11 @@ export const publicRoutes = ["/", "/sign-in", "/this-page-does-not-exist"];
 
 /** Pages that need a signed-in user; also listed in proxy.ts. */
 export const protectedRoutes = ["/account"];
+
+/** Public pages that send a signed-in visitor elsewhere. */
+export const signedOutOnlyRoutes = ["/sign-in"];
+
+/** Every page a signed-in visitor can actually see. */
+export const signedInRoutes = [...publicRoutes, ...protectedRoutes].filter(
+  (route) => !signedOutOnlyRoutes.includes(route),
+);

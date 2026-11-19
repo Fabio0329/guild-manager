@@ -74,7 +74,13 @@ delete a test, or edit lint/test config or the hooks to get past it.
 - Unit and component tests sit next to their code as `*.test.ts(x)`
   (Vitest, jsdom, Testing Library).
 - Page tests are `test/e2e/*.spec.ts` (Playwright, against a production
-  build).
+  build). They run against `guild_manager_test` with the settings in
+  `test/e2e/env.ts` (global setup creates, migrates, and empties it).
+  For signed-in pages use `signInAsNewUser(context)` from
+  `test/e2e/test-auth.ts`; never add Better Auth's `testUtils` plugin to
+  `server/auth/config.ts`.
+- New routes go in `test/e2e/routes.ts` (public, protected, or
+  signed-out-only), so every page gets axe and reflow checks.
 - A new check must be seen failing once: break the code, watch it fail,
   restore it.
 

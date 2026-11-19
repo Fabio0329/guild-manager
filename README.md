@@ -16,7 +16,10 @@ npm run db:up               # start PostgreSQL in Docker (port 5433)
 npm run dev                 # http://localhost:3000
 ```
 
-Run `npx playwright install chromium` once before the page tests.
+Run `npx playwright install chromium` once before the page tests. They use
+their own database, `guild_manager_test`, in the same Postgres: it's created
+and migrated automatically and emptied at the start of each run, so your
+dev data is never touched.
 
 ## Scripts
 
